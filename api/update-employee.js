@@ -10,25 +10,25 @@ export default async function handler(req, res) {
   );
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
+    res.status(200).json({ success: true });
     return;
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
   const { id, email, password, name, role, phone, status, username, photo } = req.body;
 
   if (!id) {
-    return res.status(400).json({ error: 'Employee ID is required' });
+    return res.status(400).json({ success: false, error: 'Employee ID is required' });
   }
 
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceRoleKey) {
-    return res.status(500).json({ error: 'Server configuration error' });
+    return res.status(500).json({ success: false, error: 'Server configuration error' });
   }
 
   const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
@@ -66,9 +66,9 @@ export default async function handler(req, res) {
 
     if (empError) throw empError;
 
-    return res.status(200).json({ employee: empData[0] });
+    return res.status(200).json({ success: true, message: 'Employee updated successfully', employee: empData ? empData[0] : null });
   } catch (error) {
     console.error('Error in update-employee:', error);
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ success: false, error: error instanceof Error ? error.message : 'Unexpected server error' });
   }
 }

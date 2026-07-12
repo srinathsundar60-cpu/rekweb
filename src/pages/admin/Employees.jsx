@@ -96,8 +96,28 @@ const Employees = () => {
         body: JSON.stringify(payload)
       });
 
-      const resData = await response.json();
-      if (!response.ok) throw new Error(resData.error || 'Failed to save employee.');
+      console.log("Employee API URL:", endpoint);
+      console.log("Employee API status:", response.status);
+
+      const responseText = await response.text();
+      let resData = null;
+
+      if (responseText) {
+        try {
+          resData = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error("Invalid API response:", responseText);
+          throw new Error("Unable to save employee. The server returned an invalid response.");
+        }
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          resData?.error ||
+          resData?.message ||
+          `Request failed with status ${response.status}`
+        );
+      }
 
       toast.success(`Employee ${modalType === 'add' ? 'created' : 'updated'} successfully`);
       setModalType(null);
