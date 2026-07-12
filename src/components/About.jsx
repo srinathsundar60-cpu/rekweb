@@ -1,5 +1,5 @@
 import React from 'react';
-
+// Major Issuse Changed...
 const About = () => {
   return (
     <section id="about">
