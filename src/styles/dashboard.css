@@ -462,15 +462,22 @@ body.dashboard-active {
   margin-bottom: 1.5rem;
 }
 
-.form-label {
+.form-label,
+.form-group .form-label,
+.modal-body .form-label {
   display: block;
   font-size: 0.9rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: var(--dash-text-muted);
+  color: #F5F5F5 !important;
 }
 
-.form-input, .form-select, .form-textarea {
+.form-group .form-input, 
+.form-group .form-select, 
+.form-group .form-textarea,
+.modal-body .form-input,
+.modal-body .form-select,
+.modal-body .form-textarea {
   width: 100%;
   padding: 0.85rem 1.25rem;
   border-radius: 12px;
@@ -483,13 +490,32 @@ body.dashboard-active {
   outline: none;
 }
 
-.form-input:focus, .form-select:focus, .form-textarea:focus {
+.form-group .form-input:focus, 
+.form-group .form-select:focus, 
+.form-group .form-textarea:focus,
+.modal-body .form-input:focus,
+.modal-body .form-select:focus,
+.modal-body .form-textarea:focus {
   border-color: var(--rek-orange);
   background: rgba(0, 0, 0, 0.6);
   box-shadow: 0 0 0 2px var(--rek-orange-dim);
 }
 
-.form-textarea {
+.form-group .form-select option,
+.modal-body .form-select option {
+  background: #222222;
+  color: #FFFFFF;
+}
+
+.form-group .form-input::placeholder,
+.form-group .form-textarea::placeholder,
+.modal-body .form-input::placeholder,
+.modal-body .form-textarea::placeholder {
+  color: var(--dash-text-dim);
+}
+
+.form-group .form-textarea,
+.modal-body .form-textarea {
   min-height: 120px;
   resize: vertical;
 }

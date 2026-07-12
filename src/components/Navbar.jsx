@@ -70,9 +70,7 @@ const Navbar = () => {
   return (
     <>
       <nav id="navbar" className={isScrolled ? 'scrolled' : ''}>
-        <a href="#hero" className="nav-logo" aria-label="rek logo">
-          <LogoImage />
-        </a>
+        <LogoImage className="nav-logo" />
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
           <li><a href="#services">Services</a></li>
