@@ -58,7 +58,7 @@ const DashboardLayout = ({ children }) => {
     <div className="dashboard-container">
       {/* Mobile Header */}
       <div className="mobile-header">
-        <LogoImage />
+        <LogoImage theme="dark" />
         <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
           <Menu size={24} />
         </button>
@@ -72,7 +72,7 @@ const DashboardLayout = ({ children }) => {
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <LogoImage />
+          <LogoImage theme="dark" />
           <button className="close-btn" onClick={() => setSidebarOpen(false)}>
             <X size={24} />
           </button>

@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="footer-main">
         <div className="footer-left reveal">
           <span className="footer-brand-logo" aria-label="rek logo">
-            <LogoImage />
+            <LogoImage theme="dark" />
           </span>
           <p className="footer-tagline">Building digital products that work.</p>
         </div>
