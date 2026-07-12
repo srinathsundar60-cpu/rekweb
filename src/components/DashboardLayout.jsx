@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogoImage } from './LogoImage';
@@ -23,6 +23,13 @@ const DashboardLayout = ({ children }) => {
   const isAdmin = employee?.role === 'Admin';
   const prefix = isAdmin ? '/admin' : '/employee';
 
+  useEffect(() => {
+    document.body.classList.add('dashboard-active');
+    return () => {
+      document.body.classList.remove('dashboard-active');
+    };
+  }, []);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -38,7 +45,7 @@ const DashboardLayout = ({ children }) => {
     { to: '/admin/clients', icon: <Briefcase size={20} />, label: 'Clients' },
     { to: '/admin/requests', icon: <FolderGit2 size={20} />, label: 'Project Requests' },
     { to: '/admin/portfolio', icon: <UserCircle size={20} />, label: 'Portfolio' },
-    { to: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
+    { to: '/admin/profile', icon: <UserCircle size={20} />, label: 'Profile' },
   ] : [
     { to: '/employee', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { to: '/employee/clients', icon: <Briefcase size={20} />, label: 'Clients' },

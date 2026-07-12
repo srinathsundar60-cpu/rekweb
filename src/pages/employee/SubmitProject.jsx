@@ -17,6 +17,7 @@ const SubmitProject = () => {
     description: '',
     website_link: '',
     github_link: '',
+    demo_video: '',
   });
 
   const [thumbnailFile, setThumbnailFile] = useState(null);
@@ -50,6 +51,12 @@ const SubmitProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (formData.demo_video && !formData.demo_video.includes('drive.google.com')) {
+      toast.error('Demo Video must be a Google Drive link.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -103,7 +110,7 @@ const SubmitProject = () => {
         <p className="dashboard-subtitle">Submit completed work for admin approval.</p>
       </div>
 
-      <div className="card" style={{ maxWidth: '800px' }}>
+      <div className="glass-card" style={{ maxWidth: '800px' }}>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Project Title *</label>
@@ -194,6 +201,17 @@ const SubmitProject = () => {
                 className="form-input" 
                 placeholder="https://github.com/..." 
                 value={formData.github_link} 
+                onChange={handleChange} 
+              />
+            </div>
+            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+              <label className="form-label">Demo Video (Google Drive Link)</label>
+              <input 
+                type="url" 
+                name="demo_video" 
+                className="form-input" 
+                placeholder="https://drive.google.com/..." 
+                value={formData.demo_video} 
                 onChange={handleChange} 
               />
             </div>

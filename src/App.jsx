@@ -8,6 +8,7 @@ import DashboardLayout from './components/DashboardLayout';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Employees from './pages/admin/Employees';
+import AdminEmployeeProfile from './pages/admin/AdminEmployeeProfile';
 import Clients from './pages/admin/Clients';
 import ProjectRequests from './pages/admin/ProjectRequests';
 import PortfolioManagement from './pages/admin/PortfolioManagement';
@@ -17,8 +18,7 @@ import SubmitProject from './pages/employee/SubmitProject';
 import EmployeeClients from './pages/employee/EmployeeClients';
 import MyProjects from './pages/employee/MyProjects';
 
-// Placeholder imports for remaining pages
-const Profile = () => <div>Profile Placeholder</div>;
+import Profile from './pages/shared/Profile';
 
 function App() {
   return (
@@ -32,10 +32,11 @@ function App() {
       <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
         <Route path="/admin" element={<DashboardLayout><AdminDashboard /></DashboardLayout>} />
         <Route path="/admin/employees" element={<DashboardLayout><Employees /></DashboardLayout>} />
+        <Route path="/admin/employees/:id" element={<DashboardLayout><AdminEmployeeProfile /></DashboardLayout>} />
         <Route path="/admin/clients" element={<DashboardLayout><Clients /></DashboardLayout>} />
         <Route path="/admin/requests" element={<DashboardLayout><ProjectRequests /></DashboardLayout>} />
         <Route path="/admin/portfolio" element={<DashboardLayout><PortfolioManagement /></DashboardLayout>} />
-        <Route path="/admin/settings" element={<DashboardLayout><div>Settings Placeholder</div></DashboardLayout>} />
+        <Route path="/admin/profile" element={<DashboardLayout><Profile /></DashboardLayout>} />
       </Route>
 
       {/* Employee Routes */}
