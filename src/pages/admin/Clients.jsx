@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'react-hot-toast';
-import { Search, Plus, X, Edit2, Trash2 } from 'lucide-react';
+import { Search, X, Edit2, Trash2 } from 'lucide-react';
 
 const ClientRow = React.memo(({ client, onEdit, onDelete }) => {
   return (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'react-hot-toast';
-import { Search, Plus, X, Edit2, RotateCw } from 'lucide-react';
+import { Search, Plus, X, Edit2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Memoized table row component for optimized rendering
@@ -190,20 +190,9 @@ const Employees = () => {
           <h1 className="dashboard-title">Employees</h1>
           <p className="dashboard-subtitle" style={{ marginBottom: 0 }}>Manage team members and roles.</p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <button 
-            onClick={fetchEmployees} 
-            className={`btn-refresh ${loading ? 'loading' : ''}`}
-            title="Refresh employee data"
-            disabled={loading}
-          >
-            <RotateCw size={16} />
-            Refresh
-          </button>
-          <button onClick={handleOpenAdd} className="btn-primary" style={{ minHeight: 'auto' }}>
-            <Plus size={18} /> Add Employee
-          </button>
-        </div>
+        <button onClick={handleOpenAdd} className="btn-primary" style={{ minHeight: 'auto' }}>
+          <Plus size={18} /> Add Employee
+        </button>
       </div>
 
       <div className="glass-card" style={{ padding: '1.5rem' }}>

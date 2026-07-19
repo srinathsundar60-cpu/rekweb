@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for changes on auth state (sign in, sign out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setLoading(true);
       if (session?.user) {
         setUser(session.user);
         await fetchEmployeeData(session.user.id);
@@ -43,7 +42,6 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setEmployee(null);
       }
-      setLoading(false);
     });
 
     return () => {
