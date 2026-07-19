@@ -1,12 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'react-hot-toast';
-import { Search, Plus, X, Edit2 } from 'lucide-react';
+import { Search, Plus, X, Edit2, RotateCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+// Memoized table row component for optimized rendering
+const EmployeeRow = React.memo(({ emp, onEdit }) => {
+  return (
+    <tr>
+      <td>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="user-avatar" style={{ width: '36px', height: '36px', fontSize: '0.9rem' }}>
+            {emp.photo ? <img src={emp.photo} alt="" /> : emp.name.charAt(0)}
+          </div>
+          <div style={{ fontWeight: 500 }}>{emp.name}</div>
+        </div>
+      </td>
+      <td>{emp.role}</td>
+      <td style={{ color: 'var(--dash-text-muted)' }}>{emp.email}</td>
+      <td>
+        <span className={`badge ${emp.status === 'Active' ? 'badge-success' : 'badge-neutral'}`}>
+          {emp.status || 'Active'}
+        </span>
+      </td>
+      <td>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <Link to={`/admin/employees/${emp.id}`} style={{ color: 'var(--rek-orange)', textDecoration: 'none', fontWeight: 600, fontSize: '0.9rem' }}>
+            View Profile
+          </Link>
+          <button onClick={() => onEdit(emp)} className="btn-icon" title="Edit Employee">
+            <Edit2 size={16} />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+});
+
+EmployeeRow.displayName = 'EmployeeRow';
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchValue, setSearchValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   const [modalType, setModalType] = useState(null); // 'add' or 'edit'
@@ -17,11 +53,16 @@ const Employees = () => {
   const [photoFile, setPhotoFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Debounce search input (300ms)
   useEffect(() => {
-    fetchEmployees();
-  }, []);
+    const handler = setTimeout(() => {
+      setSearchTerm(searchValue);
+    }, 300);
 
-  const fetchEmployees = async () => {
+    return () => clearTimeout(handler);
+  }, [searchValue]);
+
+  const fetchEmployees = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -32,19 +73,24 @@ const Employees = () => {
       if (error) throw error;
       setEmployees(data || []);
     } catch (error) {
+      console.error('Error fetching employees:', error);
       toast.error('Failed to load employees');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleOpenAdd = () => {
+  useEffect(() => {
+    fetchEmployees();
+  }, [fetchEmployees]);
+
+  const handleOpenAdd = useCallback(() => {
     setFormData({ name: '', username: '', email: '', password: '', phone: '', role: 'Developer', status: 'Active' });
     setPhotoFile(null);
     setModalType('add');
-  };
+  }, []);
 
-  const handleOpenEdit = (emp) => {
+  const handleOpenEdit = useCallback((emp) => {
     setSelectedEmployee(emp);
     setFormData({ 
       name: emp.name || '', 
@@ -57,11 +103,13 @@ const Employees = () => {
     });
     setPhotoFile(null);
     setModalType('edit');
-  };
+  }, []);
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = useCallback((e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
 
-  const handlePhotoUpload = async () => {
+  const handlePhotoUpload = useCallback(async () => {
     if (!photoFile) return null;
     const fileExt = photoFile.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
@@ -70,9 +118,9 @@ const Employees = () => {
     if (uploadError) throw uploadError;
     const { data: { publicUrl } } = supabase.storage.from('rek-storage').getPublicUrl(filePath);
     return publicUrl;
-  };
+  }, [photoFile]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
@@ -106,7 +154,7 @@ const Employees = () => {
         try {
           resData = JSON.parse(responseText);
         } catch (parseError) {
-          console.error("Invalid API response:", responseText);
+          console.error("Invalid API response:", responseText, parseError);
           throw new Error("Unable to save employee. The server returned an invalid response.");
         }
       }
@@ -127,7 +175,7 @@ const Employees = () => {
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [formData, photoFile, selectedEmployee, modalType, handlePhotoUpload, fetchEmployees]);
 
   const filteredEmployees = employees.filter(emp => 
     (emp.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -137,27 +185,54 @@ const Employees = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 className="dashboard-title">Employees</h1>
           <p className="dashboard-subtitle" style={{ marginBottom: 0 }}>Manage team members and roles.</p>
         </div>
-        <button onClick={handleOpenAdd} className="btn-primary" style={{ minHeight: 'auto' }}>
-          <Plus size={18} /> Add Employee
-        </button>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <button 
+            onClick={fetchEmployees} 
+            className={`btn-refresh ${loading ? 'loading' : ''}`}
+            title="Refresh employee data"
+            disabled={loading}
+          >
+            <RotateCw size={16} />
+            Refresh
+          </button>
+          <button onClick={handleOpenAdd} className="btn-primary" style={{ minHeight: 'auto' }}>
+            <Plus size={18} /> Add Employee
+          </button>
+        </div>
       </div>
 
       <div className="glass-card" style={{ padding: '1.5rem' }}>
-        <div style={{ marginBottom: '1.5rem', position: 'relative', maxWidth: '320px' }}>
-          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--dash-text-muted)' }} />
-          <input
-            type="text"
-            className="form-input"
-            placeholder="Search employees..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ paddingLeft: '2.8rem' }}
-          />
+        <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div className="dashboard-search-container">
+            <div className="dashboard-search-wrapper">
+              <input
+                type="text"
+                className="dashboard-search-input"
+                placeholder="Search employees by name, role, email..."
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+              <Search className="dashboard-search-icon" size={20} />
+              {searchValue && (
+                <button 
+                  type="button" 
+                  className="dashboard-search-clear"
+                  onClick={() => {
+                    setSearchValue('');
+                    setSearchTerm('');
+                  }}
+                  title="Clear search"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="table-container">
@@ -182,33 +257,7 @@ const Employees = () => {
                 </tr>
               ) : (
                 filteredEmployees.map((emp) => (
-                  <tr key={emp.id}>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div className="user-avatar" style={{ width: '36px', height: '36px', fontSize: '0.9rem' }}>
-                          {emp.photo ? <img src={emp.photo} alt="" /> : emp.name.charAt(0)}
-                        </div>
-                        <div style={{ fontWeight: 500 }}>{emp.name}</div>
-                      </div>
-                    </td>
-                    <td>{emp.role}</td>
-                    <td style={{ color: 'var(--dash-text-muted)' }}>{emp.email}</td>
-                    <td>
-                      <span className={`badge ${emp.status === 'Active' ? 'badge-success' : 'badge-neutral'}`}>
-                        {emp.status || 'Active'}
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <Link to={`/admin/employees/${emp.id}`} style={{ color: 'var(--rek-orange)', textDecoration: 'none', fontWeight: 600, fontSize: '0.9rem' }}>
-                          View Profile
-                        </Link>
-                        <button onClick={() => handleOpenEdit(emp)} className="btn-icon" title="Edit Employee">
-                          <Edit2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                  <EmployeeRow key={emp.id} emp={emp} onEdit={handleOpenEdit} />
                 ))
               )}
             </tbody>

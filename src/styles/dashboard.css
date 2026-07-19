@@ -743,3 +743,118 @@ body.dashboard-active {
     padding: 1.5rem;
   }
 }
+
+/* ── MODERN DASHBOARD SEARCH BAR ── */
+.dashboard-search-container {
+  position: relative;
+  width: 100%;
+  max-width: 380px; /* Width range 320px - 380px */
+}
+
+.dashboard-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.dashboard-search-icon {
+  position: absolute;
+  left: 1.1rem;
+  color: var(--dash-text-muted);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.dashboard-search-input {
+  width: 100%;
+  height: 46px; /* Height range 44px - 48px */
+  padding: 0 3rem 0 3.2rem; /* Proper padding for icon and clear button */
+  border-radius: 14px; /* Rounded corners 12px - 16px */
+  background-color: #161B22; /* Dark modern background */
+  border: 1px solid #30363D; /* Subtle border */
+  color: #FFFFFF; /* White input text */
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  transition: all 0.2s ease; /* 200ms transitions */
+  outline: none;
+}
+
+.dashboard-search-input::placeholder {
+  color: #8b949e; /* Light gray placeholder text */
+  opacity: 0.8;
+}
+
+.dashboard-search-input:hover {
+  border-color: #484f58;
+  background-color: #1c2128;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-search-input:focus {
+  border-color: #F97316; /* Orange focus border */
+  background-color: #0d1117;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-search-input:focus + .dashboard-search-icon {
+  color: #F97316; /* Color match on focus */
+}
+
+.dashboard-search-clear {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--dash-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.dashboard-search-clear:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+/* ── REFRESH BUTTON ── */
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--dash-border);
+  color: var(--dash-text-muted);
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--dash-transition);
+  font-size: 0.9rem;
+  min-height: auto;
+}
+
+.btn-refresh:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--dash-border-hover);
+  color: var(--dash-text);
+}
+
+.btn-refresh:active {
+  transform: scale(0.98);
+}
+
+.btn-refresh.loading svg {
+  animation: spin-refresh 1s linear infinite;
+}
+
+@keyframes spin-refresh {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+

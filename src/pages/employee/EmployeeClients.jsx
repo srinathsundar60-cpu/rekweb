@@ -1,13 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { Search, Plus, X, Edit2, Trash2 } from 'lucide-react';
 
+const ClientRow = React.memo(({ client, onEdit, onDelete }) => {
+  return (
+    <tr>
+      <td style={{ fontWeight: 500 }}>{client.company_name}</td>
+      <td>{client.client_name}</td>
+      <td>{client.project_name}</td>
+      <td>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span>{client.email || '-'}</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--dash-text-muted)' }}>{client.phone || '-'}</span>
+        </div>
+      </td>
+      <td>{client.location || '-'}</td>
+      <td>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button onClick={() => onEdit(client)} className="btn-icon" title="Edit"><Edit2 size={16} /></button>
+          <button onClick={() => onDelete(client)} className="btn-icon" title="Delete" style={{ color: 'var(--status-error)' }}><Trash2 size={16} /></button>
+        </div>
+      </td>
+    </tr>
+  );
+});
+
+ClientRow.displayName = 'ClientRow';
+
 const EmployeeClients = () => {
   const { employee } = useAuth();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchValue, setSearchValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   const [modalType, setModalType] = useState(null); // 'add', 'edit', 'delete'
@@ -17,29 +43,40 @@ const EmployeeClients = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  // Debounce search input (300ms)
   useEffect(() => {
-    if (employee?.id) fetchClients();
-  }, [employee]);
+    const handler = setTimeout(() => {
+      setSearchTerm(searchValue);
+    }, 300);
 
-  const fetchClients = async () => {
+    return () => clearTimeout(handler);
+  }, [searchValue]);
+
+  const fetchClients = useCallback(async () => {
+    if (!employee?.id) return;
     setLoading(true);
     try {
       const { data, error } = await supabase.from('client').select('*').eq('employee_id', employee.id).order('created_at', { ascending: false });
       if (error) throw error;
       setClients(data || []);
     } catch (error) {
+      console.error('Error fetching employee clients:', error);
       toast.error('Failed to load your clients');
     } finally {
       setLoading(false);
     }
-  };
+  }, [employee]);
 
-  const handleOpenAdd = () => {
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
+
+  const handleOpenAdd = useCallback(() => {
     setFormData({ client_name: '', company_name: '', project_name: '', budget: '', email: '', phone: '', linkedin: '', location: '' });
     setModalType('add');
-  };
+  }, []);
 
-  const handleOpenEdit = (client) => {
+  const handleOpenEdit = useCallback((client) => {
     setSelectedClient(client);
     setFormData({ 
       client_name: client.client_name || '', 
@@ -52,21 +89,23 @@ const EmployeeClients = () => {
       location: client.location || '' 
     });
     setModalType('edit');
-  };
+  }, []);
 
-  const handleOpenDelete = (client) => {
+  const handleOpenDelete = useCallback((client) => {
     setSelectedClient(client);
     setModalType('delete');
-  };
+  }, []);
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = useCallback((e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
 
-  const validateLinkedIn = (url) => {
+  const validateLinkedIn = useCallback((url) => {
     if (!url) return true; // Optional
     return url.startsWith('https://www.linkedin.com/') || url.startsWith('https://linkedin.com/');
-  };
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (!validateLinkedIn(formData.linkedin)) {
       toast.error("Please provide a valid LinkedIn URL (https://linkedin.com/...)");
@@ -91,9 +130,9 @@ const EmployeeClients = () => {
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [formData, employee, selectedClient, modalType, validateLinkedIn, fetchClients]);
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     setSubmitting(true);
     try {
       const { error } = await supabase.from('client').delete().eq('id', selectedClient.id);
@@ -106,7 +145,7 @@ const EmployeeClients = () => {
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [selectedClient, fetchClients]);
 
   const filteredClients = clients.filter(c => 
     (c.client_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -126,9 +165,32 @@ const EmployeeClients = () => {
       </div>
 
       <div className="glass-card">
-        <div style={{ marginBottom: '1.5rem', position: 'relative', maxWidth: '320px' }}>
-          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--dash-text-muted)' }} />
-          <input type="text" className="form-input" placeholder="Search clients..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ paddingLeft: '2.8rem' }} />
+        <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div className="dashboard-search-container">
+            <div className="dashboard-search-wrapper">
+              <input
+                type="text"
+                className="dashboard-search-input"
+                placeholder="Search clients by name, company..."
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+              <Search className="dashboard-search-icon" size={20} />
+              {searchValue && (
+                <button 
+                  type="button" 
+                  className="dashboard-search-clear"
+                  onClick={() => {
+                    setSearchValue('');
+                    setSearchTerm('');
+                  }}
+                  title="Clear search"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="table-container">
@@ -150,24 +212,7 @@ const EmployeeClients = () => {
                 <tr><td colSpan="6" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--dash-text-muted)' }}>No clients found.</td></tr>
               ) : (
                 filteredClients.map((c) => (
-                  <tr key={c.id}>
-                    <td style={{ fontWeight: 500 }}>{c.company_name}</td>
-                    <td>{c.client_name}</td>
-                    <td>{c.project_name}</td>
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                        <span>{c.email || '-'}</span>
-                        <span style={{ fontSize: '0.85rem', color: 'var(--dash-text-muted)' }}>{c.phone || '-'}</span>
-                      </div>
-                    </td>
-                    <td>{c.location || '-'}</td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button onClick={() => handleOpenEdit(c)} className="btn-icon" title="Edit"><Edit2 size={16} /></button>
-                        <button onClick={() => handleOpenDelete(c)} className="btn-icon" title="Delete" style={{ color: 'var(--status-error)' }}><Trash2 size={16} /></button>
-                      </div>
-                    </td>
-                  </tr>
+                  <ClientRow key={c.id} client={c} onEdit={handleOpenEdit} onDelete={handleOpenDelete} />
                 ))
               )}
             </tbody>
