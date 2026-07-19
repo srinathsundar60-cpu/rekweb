@@ -39,10 +39,23 @@ export default async function handler(req, res) {
   });
 
   try {
-    // Update auth user if email or password changed
+    // Fetch the current employee record to compare the email
+    const { data: existingEmp, error: fetchError } = await supabaseAdmin
+      .from('employee')
+      .select('email')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    // Update auth user if email changed or password is provided
     const updateData = {};
-    if (email) updateData.email = email;
-    if (password) updateData.password = password;
+    if (email && email.toLowerCase() !== (existingEmp.email || '').toLowerCase()) {
+      updateData.email = email;
+    }
+    if (password) {
+      updateData.password = password;
+    }
     
     if (Object.keys(updateData).length > 0) {
       const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(id, updateData);
