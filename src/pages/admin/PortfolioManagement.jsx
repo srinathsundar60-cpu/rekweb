@@ -83,16 +83,16 @@ const PortfolioManagement = () => {
               ) : (
                 projects.map((proj) => (
                   <tr key={proj.id}>
-                    <td style={{ fontWeight: 500 }}>{proj.title}</td>
-                    <td>{proj.client?.company_name || proj.client?.client_name}</td>
-                    <td>{proj.nature}</td>
-                    <td>
+                    <td data-label="Project Title" style={{ fontWeight: 500 }}>{proj.title}</td>
+                    <td data-label="Client">{proj.client?.company_name || proj.client?.client_name}</td>
+                    <td data-label="Nature">{proj.nature}</td>
+                    <td data-label="Visibility">
                       <span className={`badge ${proj.visibility ? 'badge-success' : 'badge-neutral'}`}>
                         {proj.visibility ? 'Visible' : 'Hidden'}
                       </span>
                     </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <td data-label="Actions">
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', justifyContent: 'flex-end' }}>
                          <button 
                           onClick={() => setPreviewModal(proj)}
                           className="btn-icon"

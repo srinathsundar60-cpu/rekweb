@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 const EmployeeRow = React.memo(({ emp, onEdit }) => {
   return (
     <tr>
-      <td>
+      <td data-label="Name">
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div className="user-avatar" style={{ width: '36px', height: '36px', fontSize: '0.9rem' }}>
             {emp.photo ? <img src={emp.photo} alt="" /> : emp.name.charAt(0)}
@@ -16,15 +16,15 @@ const EmployeeRow = React.memo(({ emp, onEdit }) => {
           <div style={{ fontWeight: 500 }}>{emp.name}</div>
         </div>
       </td>
-      <td>{emp.role}</td>
-      <td style={{ color: 'var(--dash-text-muted)' }}>{emp.email}</td>
-      <td>
+      <td data-label="Role">{emp.role}</td>
+      <td data-label="Email" style={{ color: 'var(--dash-text-muted)' }}>{emp.email}</td>
+      <td data-label="Status">
         <span className={`badge ${emp.status === 'Active' ? 'badge-success' : 'badge-neutral'}`}>
           {emp.status || 'Active'}
         </span>
       </td>
-      <td>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <td data-label="Actions">
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'flex-end' }}>
           <Link to={`/admin/employees/${emp.id}`} style={{ color: 'var(--rek-orange)', textDecoration: 'none', fontWeight: 600, fontSize: '0.9rem' }}>
             View Profile
           </Link>

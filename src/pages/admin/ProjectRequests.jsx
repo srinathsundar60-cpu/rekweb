@@ -96,12 +96,12 @@ const ProjectRequests = () => {
               ) : (
                 requests.map((req) => (
                   <tr key={req.id}>
-                    <td style={{ fontWeight: 500 }}>{req.title}</td>
-                    <td>{req.employee?.name}</td>
-                    <td>{req.client?.company_name || req.client?.client_name}</td>
-                    <td>{req.nature}</td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <td data-label="Project Title" style={{ fontWeight: 500 }}>{req.title}</td>
+                    <td data-label="Submitted By">{req.employee?.name}</td>
+                    <td data-label="Client">{req.client?.company_name || req.client?.client_name}</td>
+                    <td data-label="Nature">{req.nature}</td>
+                    <td data-label="Actions">
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                         <button 
                           onClick={() => setPreviewModal(req)}
                           className="btn-icon"

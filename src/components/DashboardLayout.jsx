@@ -25,8 +25,18 @@ const DashboardLayout = ({ children }) => {
 
   useEffect(() => {
     document.body.classList.add('dashboard-active');
+    
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSidebarOpen(false);
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.body.classList.remove('dashboard-active');
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 

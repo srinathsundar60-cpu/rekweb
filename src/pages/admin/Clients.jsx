@@ -6,12 +6,12 @@ import { Search, X, Edit2, Trash2 } from 'lucide-react';
 const ClientRow = React.memo(({ client, onEdit, onDelete }) => {
   return (
     <tr>
-      <td style={{ fontWeight: 500 }}>{client.company_name}</td>
-      <td>{client.client_name}</td>
-      <td>{client.project_name}</td>
-      <td>{client.employee?.name || 'Unassigned'}</td>
-      <td>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+      <td data-label="Company" style={{ fontWeight: 500 }}>{client.company_name}</td>
+      <td data-label="Client Name">{client.client_name}</td>
+      <td data-label="Project">{client.project_name}</td>
+      <td data-label="Assigned To">{client.employee?.name || 'Unassigned'}</td>
+      <td data-label="Actions">
+        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
           <button onClick={() => onEdit(client)} className="btn-icon" title="Edit"><Edit2 size={16} /></button>
           <button onClick={() => onDelete(client)} className="btn-icon" title="Delete" style={{ color: 'var(--status-error)' }}><Trash2 size={16} /></button>
         </div>

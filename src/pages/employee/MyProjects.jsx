@@ -134,7 +134,7 @@ const MyProjects = () => {
               ) : (
                 projects.map((proj) => (
                   <tr key={proj.id}>
-                    <td style={{ fontWeight: 500 }}>
+                    <td data-label="Project Title" style={{ fontWeight: 500 }}>
                       {proj.website_link ? (
                         <a href={proj.website_link} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--rek-orange)', textDecoration: 'none' }}>
                           {proj.title}
@@ -143,9 +143,9 @@ const MyProjects = () => {
                         proj.title
                       )}
                     </td>
-                    <td>{proj.client?.company_name || proj.client?.client_name}</td>
-                    <td>{proj.nature}</td>
-                    <td>
+                    <td data-label="Client">{proj.client?.company_name || proj.client?.client_name}</td>
+                    <td data-label="Nature">{proj.nature}</td>
+                    <td data-label="Status">
                       <span className={`badge ${
                         proj.approval_status === 'approved' ? 'badge-success' : 
                         proj.approval_status === 'rejected' ? 'badge-error' : 
@@ -154,15 +154,17 @@ const MyProjects = () => {
                         {proj.approval_status}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Visibility">
                       <span className={`badge ${proj.visibility ? 'badge-success' : 'badge-neutral'}`}>
                         {proj.visibility ? 'Visible' : 'Hidden'}
                       </span>
                     </td>
-                    <td>
-                      <button onClick={() => handleOpenEdit(proj)} className="btn-icon" title="Edit Project">
-                        <Edit2 size={16} />
-                      </button>
+                    <td data-label="Actions">
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <button onClick={() => handleOpenEdit(proj)} className="btn-icon" title="Edit Project">
+                          <Edit2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

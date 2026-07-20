@@ -7,18 +7,18 @@ import { Search, Plus, X, Edit2, Trash2 } from 'lucide-react';
 const ClientRow = React.memo(({ client, onEdit, onDelete }) => {
   return (
     <tr>
-      <td style={{ fontWeight: 500 }}>{client.company_name}</td>
-      <td>{client.client_name}</td>
-      <td>{client.project_name}</td>
-      <td>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+      <td data-label="Company" style={{ fontWeight: 500 }}>{client.company_name}</td>
+      <td data-label="Client Name">{client.client_name}</td>
+      <td data-label="Project">{client.project_name}</td>
+      <td data-label="Email & Phone">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', alignItems: 'flex-end' }}>
           <span>{client.email || '-'}</span>
           <span style={{ fontSize: '0.85rem', color: 'var(--dash-text-muted)' }}>{client.phone || '-'}</span>
         </div>
       </td>
-      <td>{client.location || '-'}</td>
-      <td>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+      <td data-label="Location">{client.location || '-'}</td>
+      <td data-label="Actions">
+        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
           <button onClick={() => onEdit(client)} className="btn-icon" title="Edit"><Edit2 size={16} /></button>
           <button onClick={() => onDelete(client)} className="btn-icon" title="Delete" style={{ color: 'var(--status-error)' }}><Trash2 size={16} /></button>
         </div>

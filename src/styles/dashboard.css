@@ -667,16 +667,41 @@ body.dashboard-active {
   display: none;
 }
 
-@media(max-width: 1024px) {
-  .dashboard-main {
-    margin-left: 240px;
-    padding: 2rem;
-  }
+@media(max-width: 1024px) and (min-width: 769px) {
   .sidebar {
-    width: 240px;
+    width: 80px;
+  }
+  .sidebar-header .rek-logo-img,
+  .sidebar-user .user-info,
+  .sidebar .nav-item span,
+  .logout-btn span {
+    display: none;
+  }
+  .sidebar-header {
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  .sidebar-user {
+    margin: 0 0.5rem;
+    padding: 1rem 0;
+    justify-content: center;
+  }
+  .nav-item {
+    justify-content: center;
+    padding: 0.85rem;
+  }
+  .logout-btn {
+    padding: 0.85rem;
+  }
+  .dashboard-main {
+    margin-left: 80px;
+    padding: 2rem;
   }
   .dashboard-title {
     font-size: 2.8rem;
+  }
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -740,7 +765,66 @@ body.dashboard-active {
   }
   
   .glass-card {
+    padding: 1.25rem;
+  }
+
+  /* Form & Modal Overrides */
+  .modal-body {
+    grid-template-columns: 1fr !important;
     padding: 1.5rem;
+  }
+  .form-group[style*="grid-column"] {
+    grid-column: span 1 !important;
+  }
+
+  /* Touch Targets */
+  .btn-primary, .btn-secondary, .btn-danger, .form-input, .form-select {
+    min-height: 44px;
+  }
+
+  /* Table to Card Layout */
+  .table-container {
+    border: none;
+    background: transparent;
+  }
+  .data-table, 
+  .data-table tbody, 
+  .data-table tr, 
+  .data-table td {
+    display: block;
+    width: 100%;
+  }
+  .data-table thead {
+    display: none;
+  }
+  .data-table tr {
+    margin-bottom: 1.25rem;
+    background: rgba(25, 25, 25, 0.6);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .data-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    text-align: right;
+  }
+  .data-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--dash-text-muted);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    text-align: left;
+    margin-right: 1rem;
+  }
+  .data-table tr td:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
   }
 }
 

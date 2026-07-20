@@ -152,14 +152,14 @@ const AdminEmployeeProfile = () => {
                   <tbody>
                     {projects.map(p => (
                       <tr key={p.id}>
-                        <td>{p.title}</td>
-                        <td>{p.client?.company_name || 'N/A'}</td>
-                        <td>
+                        <td data-label="Title">{p.title}</td>
+                        <td data-label="Client">{p.client?.company_name || 'N/A'}</td>
+                        <td data-label="Status">
                           <span className={`badge ${p.approval_status === 'approved' ? 'badge-success' : p.approval_status === 'rejected' ? 'badge-error' : 'badge-warning'}`}>
                             {p.approval_status}
                           </span>
                         </td>
-                        <td>
+                        <td data-label="Visibility">
                            <span className={`badge ${p.visibility ? 'badge-success' : 'badge-neutral'}`}>
                             {p.visibility ? 'Visible' : 'Hidden'}
                           </span>
@@ -189,9 +189,9 @@ const AdminEmployeeProfile = () => {
                   <tbody>
                     {clients.map(c => (
                       <tr key={c.id}>
-                        <td>{c.company_name}</td>
-                        <td>{c.client_name}</td>
-                        <td>{c.project_name}</td>
+                        <td data-label="Company">{c.company_name}</td>
+                        <td data-label="Contact Name">{c.client_name}</td>
+                        <td data-label="Project">{c.project_name}</td>
                       </tr>
                     ))}
                   </tbody>
