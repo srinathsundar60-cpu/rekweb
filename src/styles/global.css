@@ -141,6 +141,24 @@
       color: var(--black);
     }
 
+    .rek-logo-img {
+      width: 135px;
+      height: auto;
+      transition: width 0.3s var(--ease);
+    }
+
+    @media (max-width: 1024px) {
+      .rek-logo-img {
+        width: 120px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .rek-logo-img {
+        width: 105px;
+      }
+    }
+
     .nav-links {
       display: flex;
       gap: 2rem;

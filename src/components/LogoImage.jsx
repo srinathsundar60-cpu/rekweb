@@ -8,9 +8,8 @@ export const LogoImage = ({ theme = 'light', className = '' }) => (
     aria-label="rek logo"
   >
     <img 
+      className="rek-logo-img"
       src={theme === 'dark' ? "/logo-light.png" : "/logo-dark.png"} 
-      width="220" 
-      height="auto" 
       alt="rek logo" 
       style={{ display: 'block', cursor: 'pointer' }}
     />
